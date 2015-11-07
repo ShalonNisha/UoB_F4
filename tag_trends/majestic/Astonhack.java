@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package tagtrends.astonhack;
+package tag_trends.majestic;
 
 import java.net.*;
 import java.io.*;
