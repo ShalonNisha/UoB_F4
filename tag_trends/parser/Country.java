@@ -45,7 +45,6 @@ public class Country {
 			oos = new ObjectInputStream(new FileInputStream("countries.dat"));
 			countriesData = (Map<String, Integer>) oos.readObject();
 			oos.close();
-			System.out.println(countriesData);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
