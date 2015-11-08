@@ -30,6 +30,7 @@ import org.jdatepicker.impl.UtilDateModel;
 
 import tag_trends.Test;
 import tag_trends.parser.Country;
+import utils.Service;
 
 public class trendsPanel extends JPanel implements ActionListener {
 
@@ -51,7 +52,7 @@ public trendsPanel() {
 
 	  if (evt.getSource().equals(trendsPanel.submitButton))
 	  {
-		  Test.findTags(modelFrom.getYear()+"-"+modelFrom.getMonth()+"-"+modelFrom.getDay(), modelTo.getYear()+"-"+modelTo.getMonth()+"-"+modelTo.getDay(), (String)locationList.getSelectedItem());
+		  Service.findTags(modelFrom.getYear()+"-"+modelFrom.getMonth()+"-"+modelFrom.getDay(), modelTo.getYear()+"-"+modelTo.getMonth()+"-"+modelTo.getDay(), (String)locationList.getSelectedItem());
 		  System.exit(0);
 		  
 	  }
