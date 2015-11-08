@@ -1,33 +1,27 @@
 package gui;
 
+import java.io.File;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
-import javax.swing.JComboBox;
-
-import tag_trends.Test;
-import tag_trends.parser.Country;
-import utils.Service;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.util.StringConverter;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+import majestic.GetTopBackLinks;
+import tag_trends.parser.Country;
+
 
 /**
  * View-Controller for the person table.
@@ -50,6 +44,7 @@ public class EventHandlingController {
 	private DatePicker dateTo = new DatePicker(LocalDate.now());
 	
 	
+	public static String graph = "";
 	/**
 	 * The constructor (is called before the initialize()-method).
 	 */
@@ -93,13 +88,35 @@ public class EventHandlingController {
 			Instant instantTo = Instant.from(localDateTo.atStartOfDay(ZoneId.systemDefault()));
 			Date dateTo = Date.from(instantTo);
 
-			Service.findTags(localDateFrom + "\n" + instantFrom + "\n" + dateFrom, localDateTo + "\n" + instantTo + "\n" + dateTo, myComboBox.getValue());
+			graph = GetTopBackLinks.analyse(localDateFrom.toString(), localDateTo.toString(), myComboBox.getValue());
+			
+//            Parent root = FXMLLoader.load(getClass().getResource("PersonOverview.fxml"));
+            StackPane pane = new StackPane();
+//            ImageView newImage = new ImageView(new Image(graph));
+            ImageView newImage = new ImageView(new File(graph).toURI().toString());
+//            File gfile = new File(graph);
+//            System.out.println(gfile.exists());
+//            System.out.println(gfile.getAbsolutePath());
+//            Image img = new Image(graph);
+//            newImage.setImage(img);
+            newImage.setPreserveRatio(true);
+            pane.getChildren().add(newImage);
+            Stage s = new Stage();
+            
+            s.setScene(new Scene(pane, 1200, 1000));
+            s.show();
+//            this.primaryStage.setScene(new Scene(root, 600, 200));
+//            this.primaryStage.getScene();
+////            ComboBox cb = (ComboBox) this.primaryStage.getScene().lookup("combo");
+//            this.primaryStage.show();
+
+			
 			
 //			System.out.println(dateFrom.getValue().toString());
 //			Test.findTags(dateFrom.getValue().toString(), dateFrom.getValue().toString(), myComboBox.getValue());
 //			  Test.findTags(dateFrom.getYear()+"-"+modelFrom.getMonth()+"-"+modelFrom.getDay(), modelTo.getYear()+"-"+modelTo.getMonth()+"-"+modelTo.getDay(), (String)locationList.getSelectedItem());
 
-			System.exit(1);
+//			System.exit(1);
 		});
 		
 		// Handle Button event.

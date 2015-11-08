@@ -88,7 +88,8 @@ import utils.Service;
 
 public class GetTopBackLinks {
 
-	public static ArrayList<ArrayList<String>> getUrls(List<String> hastags, APIService apiService) {
+	public static ArrayList<ArrayList<String>> getUrls(List<String> hastags,
+			APIService apiService) {
 		ArrayList<ArrayList<String>> urls = new ArrayList<ArrayList<String>>();
 		for (int i = 0; i < hastags.size(); i++) {
 			ArrayList<String> tempurls = new ArrayList<String>();
@@ -98,12 +99,14 @@ public class GetTopBackLinks {
 			parameters.put("scope", "0");
 			parameters.put("count", "10");
 			// parameters.put("datasource", "fresh");
-			Response SearchByKeywordresponse = apiService.executeCommand("SearchByKeyword", parameters);
+			Response SearchByKeywordresponse = apiService.executeCommand(
+					"SearchByKeyword", parameters);
 			// check the response code
 			if (SearchByKeywordresponse.isOK()) {
 
 				// print the URL table
-				DataTable results = SearchByKeywordresponse.getTableForName("Results");
+				DataTable results = SearchByKeywordresponse
+						.getTableForName("Results");
 				System.out.println(results.getRowCount());
 
 				for (Map<String, String> row : results.getTableRows()) {
@@ -120,8 +123,9 @@ public class GetTopBackLinks {
 				System.out.println("\nERROR MESSAGE:");
 				System.out.println(SearchByKeywordresponse.getErrorMessage());
 
-				System.out.println(
-						"\n\n***********************************************************" + "*****************");
+				System.out
+						.println("\n\n***********************************************************"
+								+ "*****************");
 
 			}
 
@@ -131,7 +135,8 @@ public class GetTopBackLinks {
 		return urls;
 	}
 
-	public static int getNewBackLinks(String url, APIService apiService, String from, String to) {
+	public static int getNewBackLinks(String url, APIService apiService,
+			String from, String to) {
 		int numNewBackLink = 0;
 
 		Map<String, String> parameters = new LinkedHashMap<String, String>();
@@ -140,7 +145,8 @@ public class GetTopBackLinks {
 		parameters.put("Dateform", from);
 		parameters.put("Dateto", to);
 		parameters.put("datasource", "fresh");
-		Response response = apiService.executeCommand("GetNewLostBackLinks", parameters);
+		Response response = apiService.executeCommand("GetNewLostBackLinks",
+				parameters);
 
 		// check the response code
 		if (response.isOK()) {
@@ -157,20 +163,24 @@ public class GetTopBackLinks {
 			System.out.println("\nERROR MESSAGE:");
 			System.out.println(response.getErrorMessage());
 
-			System.out.println("\n\n***********************************************************" + "*****************");
+			System.out
+					.println("\n\n***********************************************************"
+							+ "*****************");
 
 		}
 
 		return numNewBackLink;
 	}
 
-	public static void creatGraph() {
-		ProjectController pc = Lookup.getDefault().lookup(ProjectController.class);
+	public static String creatGraph() {
+		ProjectController pc = Lookup.getDefault().lookup(
+				ProjectController.class);
 		pc.newProject();
 		Workspace workspace = pc.getCurrentWorkspace();
 
 		// Get controllers and models
-		ImportController importController = Lookup.getDefault().lookup(ImportController.class);
+		ImportController importController = Lookup.getDefault().lookup(
+				ImportController.class);
 
 		// Import file
 		Container container = null;
@@ -189,69 +199,86 @@ public class GetTopBackLinks {
 
 		// att
 		File attfile = new File("att.csv");
-		AttributeColumnsController ac = Lookup.getDefault().lookup(AttributeColumnsController.class);
+		AttributeColumnsController ac = Lookup.getDefault().lookup(
+				AttributeColumnsController.class);
 		String[] columnsNames = { "Id", "backLinks", "label", "type" };
-		AttributeType[] columnTypes = { AttributeType.STRING, AttributeType.INT, AttributeType.STRING,
-				AttributeType.INT };
-		ac.importCSVToNodesTable(attfile, ';', StandardCharsets.UTF_8, columnsNames, columnTypes, false);
-		AttributeModel attributeModel = Lookup.getDefault().lookup(AttributeController.class).getModel();
+		AttributeType[] columnTypes = { AttributeType.STRING,
+				AttributeType.INT, AttributeType.STRING, AttributeType.INT };
+		ac.importCSVToNodesTable(attfile, ';', StandardCharsets.UTF_8,
+				columnsNames, columnTypes, false);
+		AttributeModel attributeModel = Lookup.getDefault()
+				.lookup(AttributeController.class).getModel();
 
-		Lookup.getDefault().lookup(DataTablesController.class).refreshCurrentTable();
+		Lookup.getDefault().lookup(DataTablesController.class)
+				.refreshCurrentTable();
 
-		RankingController rankingController = Lookup.getDefault().lookup(RankingController.class);
+		RankingController rankingController = Lookup.getDefault().lookup(
+				RankingController.class);
 
 		// labels
 
-		//int maxsize = Integer.MIN_VALUE , minsize = Integer.MAX_VALUE;
-		
+		// int maxsize = Integer.MIN_VALUE , minsize = Integer.MAX_VALUE;
+
 		{
-			GraphModel graphModel = Lookup.getDefault().lookup(GraphController.class).getModel();
+			GraphModel graphModel = Lookup.getDefault()
+					.lookup(GraphController.class).getModel();
 			Graph graph = graphModel.getGraph();
 
 			for (Node n : graph.getNodes()) {
-//				int nodeSize = Integer.parseInt((n.getNodeData().getAttributes().getValue("backLinks").toString()));
-//				if (nodeSize > maxsize) {
-//					maxsize = nodeSize;
-//				}
-//				if (nodeSize < minsize) {
-//					minsize = nodeSize;
-//				}
-				
+				// int nodeSize =
+				// Integer.parseInt((n.getNodeData().getAttributes().getValue("backLinks").toString()));
+				// if (nodeSize > maxsize) {
+				// maxsize = nodeSize;
+				// }
+				// if (nodeSize < minsize) {
+				// minsize = nodeSize;
+				// }
 
-				n.getNodeData().setLabel(n.getNodeData().getAttributes().getValue("label").toString());
+				n.getNodeData().setLabel(
+						n.getNodeData().getAttributes().getValue("label")
+								.toString());
 				// getAttributes().setValue(dateColumn.getIndex(),
 				// randomDataValue);
 			}
 		}
 
 		// Rank size by backlinks
-		AttributeColumn backLinksColumn = attributeModel.getNodeTable().getColumn("backLinks");
-		Ranking fitnessRanking = rankingController.getModel().getRanking(Ranking.NODE_ELEMENT, backLinksColumn.getId());
-		AbstractSizeTransformer sizeTransformer = (AbstractSizeTransformer) rankingController.getModel()
-				.getTransformer(Ranking.NODE_ELEMENT, Transformer.RENDERABLE_SIZE);
-		//System.out.println(minsize + " " + maxsize);
+		AttributeColumn backLinksColumn = attributeModel.getNodeTable()
+				.getColumn("backLinks");
+		Ranking fitnessRanking = rankingController.getModel().getRanking(
+				Ranking.NODE_ELEMENT, backLinksColumn.getId());
+		AbstractSizeTransformer sizeTransformer = (AbstractSizeTransformer) rankingController
+				.getModel().getTransformer(Ranking.NODE_ELEMENT,
+						Transformer.RENDERABLE_SIZE);
+		// System.out.println(minsize + " " + maxsize);
 		sizeTransformer.setMinSize(5);
 		sizeTransformer.setMaxSize(90);
 		rankingController.transform(fitnessRanking, sizeTransformer);
 
 		// ================Rank color by types========================
 
-		AttributeColumn typesColumn = attributeModel.getNodeTable().getColumn("type");
+		AttributeColumn typesColumn = attributeModel.getNodeTable().getColumn(
+				"type");
 
-		System.out.println("coulns id " + attributeModel.getNodeTable().getColumn("type"));
-		Ranking typesRanking = rankingController.getModel().getRanking(Ranking.NODE_ELEMENT, typesColumn.getId());
-		AbstractColorTransformer colorTransformer = (AbstractColorTransformer) rankingController.getModel()
-				.getTransformer(Ranking.NODE_ELEMENT, Transformer.RENDERABLE_COLOR);
+		System.out.println("coulns id "
+				+ attributeModel.getNodeTable().getColumn("type"));
+		Ranking typesRanking = rankingController.getModel().getRanking(
+				Ranking.NODE_ELEMENT, typesColumn.getId());
+		AbstractColorTransformer colorTransformer = (AbstractColorTransformer) rankingController
+				.getModel().getTransformer(Ranking.NODE_ELEMENT,
+						Transformer.RENDERABLE_COLOR);
 		// Color[]
 		// cls={Color.RED,Color.PINK,Color.ORANGE,Color.BLUE,Color.DARK_GRAY,Color.LIGHT_GRAY};
 
-		colorTransformer.setColors(new Color[] { new Color(0xFEF0D9), new Color(0xB30000) });
+		colorTransformer.setColors(new Color[] { new Color(0xFEF0D9),
+				new Color(0xB30000) });
 		rankingController.transform(typesRanking, colorTransformer);
 
 		// Run YifanHuLayout for 100 passes - The layout always takes the
 		// current visible view
 
-		GraphModel graphModel = Lookup.getDefault().lookup(GraphController.class).getModel();
+		GraphModel graphModel = Lookup.getDefault()
+				.lookup(GraphController.class).getModel();
 
 		YifanHuLayout layout = new YifanHuLayout(null, new StepDisplacement(1f));
 		layout.setGraphModel(graphModel);
@@ -269,7 +296,8 @@ public class GetTopBackLinks {
 		FruchtermanReingold firstLayout = new FruchtermanReingold(null);
 		firstLayout.setGraphModel(graphModel);
 
-		firstLayout.setArea((float) graphModel.getGraph().getNodeCount() * 10000);
+		firstLayout
+				.setArea((float) graphModel.getGraph().getNodeCount() * 10000);
 		firstLayout.setSpeed(50.0);
 		firstLayout.setGravity(5.0);
 		int cnt = 0;
@@ -277,107 +305,76 @@ public class GetTopBackLinks {
 		do {
 			cnt++;
 			firstLayout.goAlgo();
-		} while (!firstLayout.isConverged() && firstLayout.canAlgo() && cnt < 1000000);
+		} while (!firstLayout.isConverged() && firstLayout.canAlgo()
+				&& cnt < 1000000);
 		System.out.println("cnt: " + cnt);
 
 		// ================================Preview
 		// configuration======================================/
-		PreviewController previewController = Lookup.getDefault().lookup(PreviewController.class);
+		PreviewController previewController = Lookup.getDefault().lookup(
+				PreviewController.class);
 		PreviewModel previewModel = previewController.getModel();
 
-		previewModel.getProperties().putValue(PreviewProperty.SHOW_NODE_LABELS, Boolean.TRUE);
-		previewModel.getProperties().putValue(PreviewProperty.NODE_LABEL_FONT,
-				previewModel.getProperties().getFontValue(PreviewProperty.NODE_LABEL_FONT).deriveFont((float) 108.5));
-		previewModel.getProperties().putValue(PreviewProperty.NODE_LABEL_PROPORTIONAL_SIZE, Boolean.FALSE);
+		previewModel.getProperties().putValue(PreviewProperty.SHOW_NODE_LABELS,
+				Boolean.TRUE);
+		previewModel.getProperties().putValue(
+				PreviewProperty.NODE_LABEL_FONT,
+				previewModel.getProperties()
+						.getFontValue(PreviewProperty.NODE_LABEL_FONT)
+						.deriveFont((float) 108.5));
+		previewModel.getProperties().putValue(
+				PreviewProperty.NODE_LABEL_PROPORTIONAL_SIZE, Boolean.FALSE);
 		previewModel.getProperties().putValue(PreviewProperty.NODE_LABEL_COLOR,
 				new DependantOriginalColor(Color.BLACK));
-		previewModel.getProperties().putValue(PreviewProperty.EDGE_CURVED, Boolean.TRUE);
-		previewModel.getProperties().putValue(PreviewProperty.EDGE_OPACITY, 100);
+		previewModel.getProperties().putValue(PreviewProperty.EDGE_CURVED,
+				Boolean.TRUE);
+		previewModel.getProperties()
+				.putValue(PreviewProperty.EDGE_OPACITY, 100);
 		previewModel.getProperties().putValue(PreviewProperty.EDGE_RADIUS, 10f);
-		previewModel.getProperties().putValue(PreviewProperty.BACKGROUND_COLOR, Color.WHITE);
+		previewModel.getProperties().putValue(PreviewProperty.BACKGROUND_COLOR,
+				Color.WHITE);
 		previewController.refreshPreview();
 
 		// ===============================Export===========================//
-		ExportController ec = Lookup.getDefault().lookup(ExportController.class);
-
+		ExportController ec = Lookup.getDefault()
+				.lookup(ExportController.class);
+		
 		try {
-			ec.exportFile(new File("graph.png"));
+			String fileName = "graph.png";
+			ec.exportFile(new File(fileName));
+			return fileName;
 		} catch (IOException ex) {
 			ex.printStackTrace();
+			return  "";
 		}
 
 		// ======================== end layout=========================/
-		try {
-			ec.exportFile(new File("graph.gexf"));
-		} catch (IOException ex) {
-			ex.printStackTrace();
-			return;
-		}
+
 	}
 
-	public static void main(String[] args) {
-
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	public static String analyse(String from, String to, String country) {
 
 		String endpoint = "http://enterprise.majesticseo.com/api_command";
-
-		System.out.println("\nEndpoint: " + endpoint);
 		String app_api_key = "FD99CA4B465C791995D204E86C7B9F9F";
 		APIService apiService = new APIService(app_api_key, endpoint);
 
-		// set up parameters
-		// Map<String, String> parameters = new LinkedHashMap<String, String>();
-		// parameters.put("MaxSourceURLs", "100");
-		// parameters.put("URL", itemToQuery);
-		// parameters.put("GetUrlData", "1");
-		// parameters.put("MaxSourceURLsPerRefDomain", "1");
-		// parameters.put("datasource", "fresh");
-		//
-		// Response response = apiService.executeCommand("GetTopBackLinks",
-		// parameters);
-		// parameters.put("MaxSourceURLs", "10");
-		// parameters.put("item0", itemToQuery);
-		//// parameters.put("GetUrlData", "1");
-		//// parameters.put("MaxSourceURLsPerRefDomain", "1");
-		// parameters.put("datasource", "fresh");
-		// Response response = apiService.executeCommand("GetBackLinksHistory",
-		// parameters);
-		// parameters.put("item", itemToQuery);
-		// parameters.put("Mode", 1);
-		// Response response = apiService.executeCommand("GetNewLostBackLinks",
-		// parameters);
-
-		String from = "2015-08-15";
-		String to = "2015-11-08";
 		Country.loadCountries();
-		List<String> hastags = Service.findTags(from, to, "Worldwide");// new
-																		// ArrayList<String>();
-																		// "Worldwide"
-
+		List<String> hastags = Service.findTags(from, to, country);
 		int totalnumUrls = 0;
-		// String itemToQuery = "www.birmingham.ac.uk/";
 
 		ArrayList<ArrayList<String>> urls = getUrls(hastags, apiService);
-		// ArrayList<ArrayList<Integer>> urlsBackLinks = new
-		// ArrayList<ArrayList<Integer>>();
 		ArrayList<Integer> urlsBackLinks = new ArrayList<Integer>();
 		ArrayList<String> url2 = new ArrayList<String>();
 		for (int i = 0; i < urls.size(); i++) {
 			totalnumUrls += urls.get(i).size();
-
-			// ArrayList<Integer> temp = new ArrayList<Integer>();
 			for (int j = 0; j < urls.get(i).size(); j++) {
 				url2.add(urls.get(i).get(j));
-				urlsBackLinks.add(getNewBackLinks(urls.get(i).get(j), apiService, from, to));
-				// System.out.println(getNewBackLinks(urls.get(i).get(j),
-				// apiService, from, to));
-				// System.out.println( urls.get(i).get(j));
+				urlsBackLinks.add(getNewBackLinks(urls.get(i).get(j),
+						apiService, from, to));
 			}
-			// urlsBackLinks.add(temp);
 		}
 		int edgesSize = hastags.size() + totalnumUrls;
 		int[][] edges = new int[edgesSize][edgesSize];
-		// int ids=0;
 		int columnStart = hastags.size();
 		for (int i = 0; i < hastags.size(); i++) {
 			for (int j = columnStart; j < columnStart + urls.get(i).size(); j++)
@@ -410,8 +407,9 @@ public class GetTopBackLinks {
 				pw1.println(i + ";" + 2 + ";" + hastags.get(i) + ";" + 1);
 
 			for (int i = hastags.size(); i < edgesSize; i++)
-				pw1.println(i + ";" + Math.log10((urlsBackLinks.get(i - hastags.size())) ) + ";"
-						+ url2.get(i - hastags.size()) + ";" + 2);
+				pw1.println(i + ";"
+						+ Math.log10((urlsBackLinks.get(i - hastags.size())))
+						+ ";" + url2.get(i - hastags.size()) + ";" + 2);
 
 			pw1.flush();
 			pw1.close();
@@ -420,48 +418,7 @@ public class GetTopBackLinks {
 			ex.printStackTrace();
 		}
 
-		creatGraph();
-		// for (int i = 0; i < hastags.size(); i++) {
-		//
-		// //SearchByKeyword
-		// Map<String, String> parameters = new LinkedHashMap<String, String>();
-		// parameters.put("query", hastags.get(i));
-		// parameters.put("scope", "0");
-		// parameters.put("count", "10");
-		// Response SearchByKeywordresponse =
-		// apiService.executeCommand("SearchByKeyword", parameters);
-		// // check the response code
-		// if (SearchByKeywordresponse.isOK()) {
-		//
-		// // print the URL table
-		// DataTable results =
-		// SearchByKeywordresponse.getTableForName("Results");//("BackLinks");//("item0");
-		// System.out.println(results.getRowCount());
-		//
-		// for (Map<String, String> row : results.getTableRows()) {
-		// // if(row.get("Name").equals("TotalLinks"))
-		// for (Entry<String, String> e : row.entrySet()) {
-		// System.out.println(e.getKey() + " : " + e.getValue());
-		//
-		// }
-		//
-		// }
-		//
-		// } else {
-		// System.out.println("\nERROR MESSAGE:");
-		// System.out.println(SearchByKeywordresponse.getErrorMessage());
-		//
-		// System.out.println("\n\n***********************************************************"
-		// + "*****************");
-		//
-		// System.out.println("\nDebugging Info:");
-		// System.out.println("\n Endpoint: \t" + endpoint);
-		// System.out.println(" API Key: \t" + app_api_key);
-		// System.out.println("\n***********************************************************"
-		// + "*****************");
-		// }
-		//
-		// }
+		return creatGraph();
 	}
 
 }

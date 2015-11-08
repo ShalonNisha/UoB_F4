@@ -1,23 +1,17 @@
 package gui;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.swing.JComboBox;
-
-import tag_trends.parser.Country;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import tag_trends.parser.Country;
 
 public class FXgui extends Application {
 

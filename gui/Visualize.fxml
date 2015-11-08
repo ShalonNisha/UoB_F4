@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane minHeight="600.0" minWidth="800.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.EventHandlingController">
+   <children>
+      <TitledPane fx:id="myTPane" animated="false" collapsible="false" text="Visualization">
+        <content>
+          <AnchorPane fx:id="myPane" minHeight="600.0" minWidth="800.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <ImageView fx:id="myImage" fitHeight="550.0" fitWidth="800.0" layoutX="14.0" layoutY="24.0" pickOnBounds="true" preserveRatio="true" />
+               </children>
+            </AnchorPane>
+        </content>
+      </TitledPane>
+   </children>
+</AnchorPane>
