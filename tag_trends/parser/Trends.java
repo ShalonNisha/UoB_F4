@@ -13,7 +13,7 @@ public class Trends {
 		Matcher matcher = TAG_REGEX_01.matcher(response);
 		List<String> tags = new LinkedList<String>();
 		while (matcher.find())
-			tags.add(matcher.group().split(" ")[1].replaceAll("</a>", ""));
+			tags.add(matcher.group().split(" ")[1].replaceAll("</a>", "").replace("#", ""));
 		return tags;
 	}
 }
