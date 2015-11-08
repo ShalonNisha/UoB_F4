@@ -13,6 +13,8 @@ import java.util.Map;
 
 public class Country {
 
+	public static Map<String, Integer> data = null;
+	
 	public static void parse(String fileName) {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(new File(
@@ -26,9 +28,10 @@ public class Country {
 			}
 
 			br.close();
-
+			File f = new File(".");
+			System.out.println(f.getAbsolutePath());
 			ObjectOutputStream oos = new ObjectOutputStream(
-					new FileOutputStream("countries.dat"));
+					new FileOutputStream("tag_trends/parser/countries.dat"));
 			oos.writeObject(countriesData);
 			oos.flush();
 			oos.close();
@@ -40,16 +43,15 @@ public class Country {
 	@SuppressWarnings("unchecked")
 	public static Map<String, Integer> loadCountries() {
 		ObjectInputStream oos;
-		Map<String, Integer> countriesData = null;
 		try {
-			oos = new ObjectInputStream(new FileInputStream("countries.dat"));
-			countriesData = (Map<String, Integer>) oos.readObject();
+			oos = new ObjectInputStream(new FileInputStream("trunk/tag_trends/parser/countries.dat"));
+			data = (Map<String, Integer>) oos.readObject();
 			oos.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		return countriesData;
+		return data;
 	}
 }
